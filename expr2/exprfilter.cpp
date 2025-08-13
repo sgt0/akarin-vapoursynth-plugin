@@ -20,6 +20,7 @@
 #define USE_EXPR_CACHE
 
 #include <algorithm>
+#include <charconv>
 #include <cmath>
 #include <cctype>
 #include <clocale>
@@ -365,6 +366,8 @@ ExprOp decodeToken(const std::string &token, bool extended = false)
         long long l = 0;
         float f = 0;
         const size_t len = token.size();
+
+        // First attempt integer conversion.
         try {
             l = std::stoll(token, &pos, 0);
         } catch (...) {
@@ -375,17 +378,19 @@ ExprOp decodeToken(const std::string &token, bool extended = false)
             else if ((uint32_t)l == l) return { ExprOpType::CONSTANTI, (uint32_t)l };
             return { ExprOpType::CONSTANTF, (float)l };
         }
-        try {
-            f = std::stof(token, &pos);
-        } catch (...) {
-            pos = 0;
-        }
-        if (pos == len)
+
+        // Then attempt float.
+        auto first = token.data();
+        auto last = token.data() + len;
+        auto [ptr, ec] = std::from_chars(first, last, f);
+        if (ec == std::errc()) {
+            if (ptr != last) {
+                throw std::runtime_error("failed to convert '" + token + "' to float, the whole token could not be converted");
+            }
+
             return { ExprOpType::CONSTANTF, f };
-        else if (pos > 0)
-            throw std::runtime_error("failed to convert '" + token + "' to float, not the whole token could be converted");
-        else
-            throw std::runtime_error("failed to convert '" + token + "' to float");
+        }
+        throw std::runtime_error("failed to convert '" + token + "' to float");
     }
 }
 
