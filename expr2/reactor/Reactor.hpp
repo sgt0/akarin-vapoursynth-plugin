@@ -18,9 +18,9 @@
 #include "Nucleus.hpp"
 #include "Routine.hpp"
 #include "Traits.hpp"
-#include "Intrinsics.hpp"
 
 #include <cassert>
+#include <cmath>
 #include <cstddef>
 #include <cstdio>
 #include <limits>
@@ -2616,28 +2616,27 @@ RValue<Float4> Ceil(RValue<Float4> x);
 
 // Trigonometric functions
 // TODO: Currently unimplemented for Subzero.
-static inline RValue<Float4> Sin(RValue<Float4> x) { return Sin<Float4>(x); }
-static inline RValue<Float4> Cos(RValue<Float4> x) { return Cos<Float4>(x); }
-static inline RValue<Float4> Tan(RValue<Float4> x) { return Tan<Float4>(x); }
-static inline RValue<Float4> Asin(RValue<Float4> x, Precision p) { return Asin<Float4>(x, p); }
-static inline RValue<Float4> Acos(RValue<Float4> x, Precision p) { return Acos<Float4>(x, p); }
-static inline RValue<Float4> Atan(RValue<Float4> x) { return Atan<Float4>(x); }
-static inline RValue<Float4> Sinh(RValue<Float4> x) { return Sinh<Float4>(x); }
-static inline RValue<Float4> Cosh(RValue<Float4> x) { return Cosh<Float4>(x); }
-static inline RValue<Float4> Tanh(RValue<Float4> x) { return Tanh<Float4>(x); }
-static inline RValue<Float4> Asinh(RValue<Float4> x) { return Asinh<Float4>(x); }
-static inline RValue<Float4> Acosh(RValue<Float4> x) { return Acosh<Float4>(x); }
-static inline RValue<Float4> Atanh(RValue<Float4> x) { return Atanh<Float4>(x); }
-static inline RValue<Float4> Atan2(RValue<Float4> x, RValue<Float4> y) { return Atan2<Float4>(x, y); }
+RValue<Float4> Sin(RValue<Float4> x);
+RValue<Float4> Cos(RValue<Float4> x);
+RValue<Float4> Tan(RValue<Float4> x);
+RValue<Float4> Asin(RValue<Float4> x, Precision p);
+RValue<Float4> Acos(RValue<Float4> x, Precision p);
+RValue<Float4> Atan(RValue<Float4> x);
+RValue<Float4> Sinh(RValue<Float4> x);
+RValue<Float4> Cosh(RValue<Float4> x);
+RValue<Float4> Tanh(RValue<Float4> x);
+RValue<Float4> Asinh(RValue<Float4> x);
+RValue<Float4> Acosh(RValue<Float4> x);
+RValue<Float4> Atanh(RValue<Float4> x);
+RValue<Float4> Atan2(RValue<Float4> x, RValue<Float4> y);
 
 // Exponential functions
 // TODO: Currently unimplemented for Subzero.
-static inline RValue<Float4> BuiltinPow(RValue<Float4> x, RValue<Float4> y) { return BuiltinPow<Float4>(x, y); }
-static inline RValue<Float4> Pow(RValue<Float4> x, RValue<Float4> y) { return Pow<Float4>(x, y); }
-static inline RValue<Float4> Exp(RValue<Float4> x) { return Exp<Float4>(x); }
-static inline RValue<Float4> Log(RValue<Float4> x) { return Log<Float4>(x); }
-static inline RValue<Float4> Exp2(RValue<Float4> x) { return Exp2<Float4>(x); }
-static inline RValue<Float4> Log2(RValue<Float4> x) { return Log2<Float4>(x); }
+RValue<Float4> Pow(RValue<Float4> x, RValue<Float4> y);
+RValue<Float4> Exp(RValue<Float4> x);
+RValue<Float4> Log(RValue<Float4> x);
+RValue<Float4> Exp2(RValue<Float4> x);
+RValue<Float4> Log2(RValue<Float4> x);
 
 class Float8 : public LValue<Float8>
 {
@@ -2778,28 +2777,27 @@ RValue<Float8> Floor(RValue<Float8> x);
 //
 // Trigonometric functions
 // TODO: Currently unimplemented for Subzero.
-static inline RValue<Float8> Sin(RValue<Float8> x) { return Sin<Float8>(x); }
-static inline RValue<Float8> Cos(RValue<Float8> x) { return Cos<Float8>(x); }
-static inline RValue<Float8> Tan(RValue<Float8> x) { return Tan<Float8>(x); }
-static inline RValue<Float8> Asin(RValue<Float8> x, Precision p) { return Asin<Float8>(x, p); }
-static inline RValue<Float8> Acos(RValue<Float8> x, Precision p) { return Acos<Float8>(x, p); }
-static inline RValue<Float8> Atan(RValue<Float8> x) { return Atan<Float8>(x); }
-static inline RValue<Float8> Sinh(RValue<Float8> x) { return Sinh<Float8>(x); }
-static inline RValue<Float8> Cosh(RValue<Float8> x) { return Cosh<Float8>(x); }
-static inline RValue<Float8> Tanh(RValue<Float8> x) { return Tanh<Float8>(x); }
-static inline RValue<Float8> Asinh(RValue<Float8> x) { return Asinh<Float8>(x); }
-static inline RValue<Float8> Acosh(RValue<Float8> x) { return Acosh<Float8>(x); }
-static inline RValue<Float8> Atanh(RValue<Float8> x) { return Atanh<Float8>(x); }
-static inline RValue<Float8> Atan2(RValue<Float8> x, RValue<Float8> y) { return Atan2<Float8>(x, y); }
+RValue<Float8> Sin(RValue<Float8> x);
+RValue<Float8> Cos(RValue<Float8> x);
+RValue<Float8> Tan(RValue<Float8> x);
+RValue<Float8> Asin(RValue<Float8> x, Precision p);
+RValue<Float8> Acos(RValue<Float8> x, Precision p);
+RValue<Float8> Atan(RValue<Float8> x);
+RValue<Float8> Sinh(RValue<Float8> x);
+RValue<Float8> Cosh(RValue<Float8> x);
+RValue<Float8> Tanh(RValue<Float8> x);
+RValue<Float8> Asinh(RValue<Float8> x);
+RValue<Float8> Acosh(RValue<Float8> x);
+RValue<Float8> Atanh(RValue<Float8> x);
+RValue<Float8> Atan2(RValue<Float8> x, RValue<Float8> y);
 //
 //// Exponential functions
 //// TODO: Currently unimplemented for Subzero.
-static inline RValue<Float8> BuiltinPow(RValue<Float8> x, RValue<Float8> y) { return BuiltinPow<Float8>(x, y); }
-static inline RValue<Float8> Pow(RValue<Float8> x, RValue<Float8> y) { return Pow<Float8>(x, y); }
-static inline RValue<Float8> Exp(RValue<Float8> x) { return Exp<Float8>(x); }
-static inline RValue<Float8> Log(RValue<Float8> x) { return Log<Float8>(x); }
-static inline RValue<Float8> Exp2(RValue<Float8> x) { return Exp2<Float8>(x); }
-static inline RValue<Float8> Log2(RValue<Float8> x) { return Log2<Float8>(x); }
+RValue<Float8> Pow(RValue<Float8> x, RValue<Float8> y);
+RValue<Float8> Exp(RValue<Float8> x);
+RValue<Float8> Log(RValue<Float8> x);
+RValue<Float8> Exp2(RValue<Float8> x);
+RValue<Float8> Log2(RValue<Float8> x);
 
 // Call a unary C function on each element of a vector type.
 template<typename Func, typename T>

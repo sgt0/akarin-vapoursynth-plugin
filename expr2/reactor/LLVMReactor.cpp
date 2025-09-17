@@ -39,8 +39,6 @@
 #	include <xmmintrin.h>
 #endif
 
-#include <math.h>
-
 #if defined(__x86_64__) && defined(_WIN32)
 extern "C" void X86CompilationCallback()
 {
@@ -3665,34 +3663,10 @@ RValue<FloatT> Atan2(RValue<FloatT> x, RValue<FloatT> y)
 }
 
 template<typename FloatT>
-RValue<FloatT> Pow(RValue<FloatT> x, RValue<FloatT> y)
-{
-	RR_DEBUG_INFO_UPDATE_LOC();
-	auto func = llvm::Intrinsic::getDeclaration(jit->module.get(), llvm::Intrinsic::pow, { T(FloatT::type()) });
-	return RValue<FloatT>(V(jit->builder->CreateCall(func, { V(x.value()), V(y.value()) })));
-}
-
-template<typename FloatT>
-RValue<FloatT> BuiltinPow(RValue<FloatT> x, RValue<FloatT> y)
-{
-	RR_DEBUG_INFO_UPDATE_LOC();
-	auto func = llvm::Intrinsic::getDeclaration(jit->module.get(), llvm::Intrinsic::pow, { T(FloatT::type()) });
-	return RValue<FloatT>(V(jit->builder->CreateCall(func, { V(x.value()), V(y.value()) })));
-}
-
-template<typename FloatT>
 RValue<FloatT> Exp(RValue<FloatT> v)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
 	auto func = llvm::Intrinsic::getDeclaration(jit->module.get(), llvm::Intrinsic::exp, { T(FloatT::type()) });
-	return RValue<FloatT>(V(jit->builder->CreateCall(func, V(v.value()))));
-}
-
-template<typename FloatT>
-RValue<FloatT> Log(RValue<FloatT> v)
-{
-	RR_DEBUG_INFO_UPDATE_LOC();
-	auto func = llvm::Intrinsic::getDeclaration(jit->module.get(), llvm::Intrinsic::log, { T(FloatT::type()) });
 	return RValue<FloatT>(V(jit->builder->CreateCall(func, V(v.value()))));
 }
 
@@ -3711,30 +3685,6 @@ RValue<FloatT> Log2(RValue<FloatT> v)
 	auto func = llvm::Intrinsic::getDeclaration(jit->module.get(), llvm::Intrinsic::log2, { T(FloatT::type()) });
 	return RValue<FloatT>(V(jit->builder->CreateCall(func, V(v.value()))));
 }
-
-#define INSTANTIATE_FUNCS(FloatT) \
-	template RValue<FloatT> Sin<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Cos<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Tan<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Asin<FloatT>(RValue<FloatT> v, Precision p); \
-	template RValue<FloatT> Acos<FloatT>(RValue<FloatT> v, Precision p); \
-	template RValue<FloatT> Atan<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Sinh<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Cosh<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Tanh<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Asinh<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Acosh<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Atanh<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Atan2<FloatT>(RValue<FloatT> x, RValue<FloatT> y); \
-	template RValue<FloatT> BuiltinPow<FloatT>(RValue<FloatT> x, RValue<FloatT> y); \
-	template RValue<FloatT> Pow<FloatT>(RValue<FloatT> x, RValue<FloatT> y); \
-	template RValue<FloatT> Exp<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Log<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Exp2<FloatT>(RValue<FloatT> v); \
-	template RValue<FloatT> Log2<FloatT>(RValue<FloatT> v);
-INSTANTIATE_FUNCS(Float4);
-INSTANTIATE_FUNCS(Float8);
-#undef INSTANTIATE_FUNCS
 
 RValue<UInt> Ctlz(RValue<UInt> v, bool isZeroUndef)
 {

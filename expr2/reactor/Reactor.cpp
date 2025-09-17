@@ -5381,4 +5381,24 @@ RValue<Float> RcpSqrt(RValue<Float> x, Precision p)
 	return DoRcpSqrt(x, p);
 }
 
+RValue<Float4> Log(RValue<Float4> x)
+{
+	return ScalarizeCall(logf, x);
+}
+
+RValue<Float4> Pow(RValue<Float4> x, RValue<Float4> y)
+{
+	return ScalarizeCall(powf, x, y);
+}
+
+RValue<Float8> Log(RValue<Float8> x)
+{
+	return ScalarizeCall(logf, x);
+}
+
+RValue<Float8> Pow(RValue<Float8> x, RValue<Float8> y)
+{
+	return ScalarizeCall(powf, x, y);
+}
+
 }  // namespace rr
