@@ -20,6 +20,7 @@
 #define USE_EXPR_CACHE
 
 #include <algorithm>
+#include <charconv>
 #include <cmath>
 #include <cctype>
 #include <clocale>
@@ -286,11 +287,12 @@ ExprOp decodeToken(const std::string &token, bool extended = false)
         if (name.size() == 1)
             return name[0] >= 'x' ? name[0] - 'x' : name[0] - 'a' + 3;
         int idx = -1;
-        try {
-            idx = std::stoi(name.substr(clipNamePrefix.size()));
-        } catch (...) {
+
+        auto result = std::from_chars(name.c_str() + clipNamePrefix.size(), name.c_str() + name.length(), idx);
+        if (result.ec != std::errc()) {
             throw std::runtime_error("invalid clip name: " + name);
         }
+
         return idx;
     };
 
@@ -305,16 +307,15 @@ ExprOp decodeToken(const std::string &token, bool extended = false)
     } else if ((token.substr(0, 3) == "dup" || token.substr(0, 4) == "swap" ||
                 token.substr(0, 4) == "drop" || token.substr(0, 4) == "sort")) {
         size_t prefix = token[1] == 'u' ? 3 : 4;
-        size_t count = 0;
         int idx = -1;
 
-        try {
-            idx = std::stoi(token.substr(prefix), &count);
-        } catch (...) {
+        auto result = std::from_chars(token.c_str() + prefix, token.c_str() + token.length(), idx);
+        if (result.ec != std::errc()) {
             // ...
         }
+        size_t count = std::distance(token.c_str(), result.ptr);
 
-        if (idx < 0 || prefix + count != token.size())
+        if (idx < 0 || count != token.size())
             throw std::runtime_error("illegal token: " + token);
         if (token[1] == 'u')
             return{ ExprOpType::DUP, idx };
@@ -327,16 +328,15 @@ ExprOp decodeToken(const std::string &token, bool extended = false)
     } else if (extended && (token.substr(0, 6) == "argmin" || token.substr(0, 6) == "argmax" ||
                             token.substr(0, 7) == "argsort")) {
         size_t prefix = token[3] == 's' ? 7 : 6;
-        size_t count = 0;
         int idx = -1;
 
-        try {
-            idx = std::stoi(token.substr(prefix), &count);
-        } catch (...) {
+        auto result = std::from_chars(token.c_str() + prefix, token.c_str() + token.length(), idx);
+        if (result.ec != std::errc()) {
             // ...
         }
+        size_t count = std::distance(token.c_str(), result.ptr);
 
-        if (idx < 0 || prefix + count != token.size())
+        if (idx < 0 || count != token.size())
             throw std::runtime_error("illegal token: " + token);
         if (token[3] == 's')
             return{ ExprOpType::ARGSORT, idx };
@@ -365,21 +365,23 @@ ExprOp decodeToken(const std::string &token, bool extended = false)
         long long l = 0;
         float f = 0;
         const size_t len = token.size();
-        try {
-            l = std::stoll(token, &pos, 0);
-        } catch (...) {
-            pos = 0;
+
+        auto resultl = std::from_chars(token.c_str(), token.c_str() + len, l);
+        if (resultl.ec == std::errc()) {
+            pos = std::distance(token.c_str(), resultl.ptr);
         }
+
         if (pos == len) {
             if ((int32_t)l == l) return { ExprOpType::CONSTANTI, (int32_t)l };
             else if ((uint32_t)l == l) return { ExprOpType::CONSTANTI, (uint32_t)l };
             return { ExprOpType::CONSTANTF, (float)l };
         }
-        try {
-            f = std::stof(token, &pos);
-        } catch (...) {
-            pos = 0;
+
+        auto resultf = std::from_chars(token.c_str(), token.c_str() + len, f);
+        if (resultf.ec == std::errc()) {
+            pos = std::distance(token.c_str(), resultf.ptr);
         }
+
         if (pos == len)
             return { ExprOpType::CONSTANTF, f };
         else if (pos > 0)
@@ -1597,9 +1599,6 @@ static void VS_CC exprCreate(const VSMap *in, VSMap *out, void *userData, VSCore
 }
 
 static void initExpr() {
-#ifndef _WIN32
-    std::setlocale(LC_NUMERIC, "C");
-#endif
     auto cfg = rr::Config::Edit()
         .set(rr::Optimization::Level::Aggressive)
         .set(rr::Optimization::FMF::FastMath)

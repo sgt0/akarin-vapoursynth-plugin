@@ -1,6 +1,7 @@
 {
   lib,
   stdenv,
+  darwinMinVersionHook,
   meson,
   ninja,
   pkg-config,
@@ -37,11 +38,16 @@ stdenv.mkDerivation (finalAttrs: {
     pkg-config
   ];
 
-  buildInputs = [
-    libllvm
-    libxml2
-    vapoursynth
-  ];
+  buildInputs =
+    [
+      libllvm
+      libxml2
+      vapoursynth
+    ]
+    # `std::to_chars()` for floating-point types was introduced in macOS 13.3.
+    # But then `darwinMinVersionHook "13.0"` yields "error: 'from_chars' is
+    # unavailable: introduced in macOS 26.0".
+    ++ lib.optional stdenv.hostPlatform.isDarwin (darwinMinVersionHook "26.0");
 
   postPatch = ''
     substituteInPlace meson.build \
